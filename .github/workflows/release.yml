@@ -1,0 +1,46 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build XPI
+        run: bash build.sh
+
+      - name: Generate update.json
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          TAG="${GITHUB_REF_NAME}"
+          cat > update.json <<EOF
+          {
+            "addons": {
+              "zotero-tag-sort@zhongrubo.github.io": {
+                "updates": [
+                  {
+                    "version": "$VERSION",
+                    "update_link": "https://github.com/zhongrubo/zotero-tag-sort/releases/download/$TAG/zotero-tag-sort.xpi"
+                  }
+                ]
+              }
+            }
+          }
+          EOF
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            zotero-tag-sort.xpi
+            update.json
+          generate_release_notes: true

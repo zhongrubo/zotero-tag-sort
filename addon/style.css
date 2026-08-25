@@ -1,0 +1,122 @@
+/* Zotero Tag Sort - styles
+ * Uses Zotero design tokens (--fill-*, --color-*, --material-*) so the
+ * added UI matches the native look and adapts to light/dark mode.
+ * License: AGPL-3.0
+ */
+
+/* Stack the sort bar above the tag list inside the tag-selector root. */
+#zotero-tag-selector {
+	flex-direction: column;
+}
+
+/* ---------------- Sort bar ---------------- */
+
+.tag-selector-sort-bar {
+	flex: 0 0 auto;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	min-height: 32px;
+	padding: 3px 8px;
+	overflow: hidden;
+	border-bottom: var(--material-panedivider);
+	background-color: transparent;
+}
+
+/* Shared rounded-rectangle "box" for the two function areas (sort /
+ * deselect), visually separating them from each other. */
+.tag-selector-sort-button,
+.tag-selector-deselect-button {
+	-moz-appearance: none;
+	appearance: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center; /* center text inside the box */
+	flex: 1 1 0;            /* both boxes always equal width */
+	min-width: 88px;        /* keep the label readable */
+	gap: 6px;
+	border: var(--material-border);
+	border-radius: 6px;
+	background-color: transparent;
+	font-size: 0.923076923em; /* match .tag-selector-item */
+	line-height: 1.3;
+	cursor: pointer;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.tag-selector-sort-button {
+	max-width: 100%;
+	margin: 0;
+	padding: 3px 10px;
+	color: var(--fill-primary);
+}
+
+.tag-selector-sort-button:hover {
+	background-color: var(--fill-quinary);
+}
+
+.tag-selector-sort-button:active {
+	background-color: var(--fill-quarternary);
+}
+
+.tag-selector-sort-button:focus-visible,
+.tag-selector-deselect-button:focus-visible {
+	outline: 1px solid var(--color-border);
+	outline-offset: -1px;
+}
+
+.tag-selector-sort-label {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.tag-selector-sort-icon {
+	flex: 0 0 auto;
+	color: var(--fill-secondary);
+	display: block;
+}
+
+/* ---------------- Tag items ---------------- */
+
+/* Soft wireframe around every tag. An inset box-shadow reads visually as a
+ * 1px border but never changes the tag's measured size, so text is never
+ * clipped and the layout stays stable. It follows border-radius and adapts
+ * to the theme via --color-border. */
+.tag-selector-item {
+	box-shadow: inset 0 0 0 1px var(--color-border);
+}
+
+/* Single-column, table-like list: each tag occupies one full-width,
+ * left-aligned row with a consistent height (the virtualized positions are
+ * overridden in JS; here we stretch each row to a uniform width). This is
+ * gated behind the .zotero-tag-sort-table class, toggled from JS when the
+ * enableTableLayout pref is on. */
+#zotero-tag-selector.zotero-tag-sort-table .tag-selector-item {
+	width: auto;
+	right: 14px;
+	display: block;
+	text-align: left;
+}
+/* ---------------- Deselect (clear selection) button ---------------- */
+
+.tag-selector-deselect-button {
+	padding: 3px 10px;
+	color: var(--fill-secondary);
+}
+
+.tag-selector-deselect-button:hover:not(:disabled) {
+	background-color: var(--fill-quinary);
+	color: var(--fill-primary);
+}
+
+.tag-selector-deselect-button:disabled {
+	opacity: 0.45;
+	cursor: default;
+}
+
+.tag-selector-deselect-icon {
+	font-size: 0.85em;
+	line-height: 1;
+	flex: 0 0 auto;
+}

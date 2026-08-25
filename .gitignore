@@ -1,0 +1,21 @@
+# Build output
+*.xpi
+
+# macOS
+.DS_Store
+
+# Editors / IDEs
+.vscode/
+.idea/
+
+# Node
+node_modules/
+
+# Logs
+*.log
+
+# Local scratch / research files
+ref/
+
+# Windows
+Thumbs.db
