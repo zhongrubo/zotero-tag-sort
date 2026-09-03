@@ -76,14 +76,10 @@ feedback, and logic are untouched.
 
 ## 截图 / Screenshots
 
-> 待补充。请将截图放入 `docs/screenshots/` 并在下方引用。
-> To be added. Put images in `docs/screenshots/` and reference them below.
+![筛选工具栏](docs/screenshots/sort-dropdown2.png)
 
-```
-docs/screenshots/sort-dropdown.png
-docs/screenshots/tag-list-light.png
-docs/screenshots/tag-list-dark.png
-```
+> 图片存放于 `docs/screenshots/` 目录。
+> Screenshots live in the `docs/screenshots/` directory.
 
 ---
 

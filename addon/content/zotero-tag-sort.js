@@ -181,12 +181,16 @@ var ZoteroTagSort = {
 			catch (e) {}
 			const doc = window.document;
 			const barPresent = !!(doc && doc.getElementById("zotero-tag-sort-bar"));
-			const patched = this._renderPatched
-				&& (!this.isTableLayoutEnabled() || this._layoutPatched);
+			// Per-window check: the render patch must be applied to THIS window's
+			// freshly-created TagSelector class (module-level flags are unreliable
+			// across window reopen).
+			const Z = window.Zotero;
+			const renderPatched = !!(Z && Z.TagSelector && Z.TagSelector.prototype
+				&& Z.TagSelector.prototype.__zoteroTagSortRenderPatched);
 			// Early-stop as soon as everything is confirmed working, so the
 			// startup helper adds only a few light ticks instead of running the
 			// full 15 seconds.
-			if (patched && barPresent && applied) {
+			if (renderPatched && barPresent && applied) {
 				window.clearInterval(timer);
 			}
 			else if (count >= 15) {
@@ -238,28 +242,23 @@ var ZoteroTagSort = {
 	/* ---------------- patching ---------------- */
 
 	ensurePatched(window, attempt) {
-		if (this._patched) {
-			this.applySortSoon(window);
-			return;
-		}
 		const Z = window.Zotero;
 		if (Z && Z.TagSelector) {
+			// Always (re-)patch when a window is opened. The tag-selector classes
+			// are per-window: after closing and reopening the main window (without
+			// quitting the app) they are freshly created, so stale module-level
+			// flags must not skip re-patching. patchAll() is idempotent via
+			// per-class prototype flags.
 			this.patchAll(window);
-			if (this._patched) {
-				this.applySortSoon(window);
-				return;
-			}
+			this.applySortSoon(window);
+			return;
 		}
 		if (attempt < 80) {
 			setTimeout(() => this.ensurePatched(window, attempt + 1), 250);
 		}
 		else if (this._retryLogged === undefined) {
 			this._retryLogged = true;
-			const Z = window.Zotero;
-			this.log("Patch retries exhausted. TagSelector=" + !!(Z && Z.TagSelector)
-				+ ", renderPatched=" + this._renderPatched
-				+ ", layoutPatched=" + this._layoutPatched
-				+ ". Tag list may keep the native flow layout.");
+			this.log("Zotero.TagSelector not found after retries.");
 		}
 	},
 
@@ -268,9 +267,10 @@ var ZoteroTagSort = {
 		const cls = Z.TagSelector;
 		if (!cls || !cls.prototype.render) return false;
 
-		let allDone = true;
-
 		// 1) Sort: wrap render() and re-sort the final tag array via cloneElement.
+		//    Guarded by a per-class prototype flag — tag-selector classes are
+		//    re-created for each window, so this re-applies automatically when a
+		//    new window is opened.
 		if (!cls.prototype.__zoteroTagSortRenderPatched) {
 			const React = this.getReact(window);
 			if (React && typeof React.cloneElement === "function") {
@@ -297,20 +297,17 @@ var ZoteroTagSort = {
 					return el;
 				};
 				cls.prototype.__zoteroTagSortRenderPatched = true;
-				this._renderPatched = true;
 				this.log("Render (sort) patch applied via React.cloneElement");
 			}
 			else {
 				this.log("React unavailable; using degraded sort patch");
 				this.patchSortTagsFallback(cls);
 				cls.prototype.__zoteroTagSortRenderPatched = true;
-				this._renderPatched = true;
 			}
 		}
 
 		// 2) Layout: force a single-column, left-aligned, full-width list.
-		if (this.isTableLayoutEnabled() && !this._layoutPatched) {
-			let layoutOK = false;
+		if (this.isTableLayoutEnabled()) {
 			try {
 				const req = this.getRequire(window);
 				let TagList = null;
@@ -333,25 +330,15 @@ var ZoteroTagSort = {
 					this._originalComponentDidUpdateTagList = TagList.prototype.componentDidUpdate;
 					this.applyLayoutPatch(TagList);
 					TagList.prototype.__zoteroTagSortLayoutPatched = true;
-					this._layoutPatched = true;
-					layoutOK = true;
 					this.log("Layout patch applied via require");
 				}
 			}
 			catch (e) {
 				this.logError(e);
 			}
-			if (!layoutOK) {
-				allDone = false;
-				if (!this._layoutRequireFailureLogged) {
-					this._layoutRequireFailureLogged = true;
-					this.log("Layout patch via require failed; will retry and use the element-chain fallback.");
-				}
-			}
 		}
 
-		this._patched = allDone;
-		return allDone;
+		return true;
 	},
 
 	patchSortTagsFallback(cls) {
@@ -471,7 +458,7 @@ var ZoteroTagSort = {
 	// whose type is the TagList class we need to patch. This guarantees the
 	// layout patch applies on any Zotero build where the tag selector renders.
 	ensureLayoutPatchedFromElement(TagSelectorClass) {
-		if (!this.isTableLayoutEnabled() || this._layoutPatched) return;
+		if (!this.isTableLayoutEnabled()) return;
 		if (!TagSelectorClass || !TagSelectorClass.prototype
 				|| typeof TagSelectorClass.prototype.render !== "function"
 				|| TagSelectorClass.prototype.__zoteroTagSortSelectorPatched) {
@@ -496,7 +483,6 @@ var ZoteroTagSort = {
 					self._originalComponentDidUpdateTagList = TagListClass.prototype.componentDidUpdate;
 					self.applyLayoutPatch(TagListClass);
 					TagListClass.prototype.__zoteroTagSortLayoutPatched = true;
-					self._layoutPatched = true;
 					self.log("Layout patch applied via element chain");
 				}
 				catch (e) {

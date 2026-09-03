@@ -1,52 +1,70 @@
-# Zotero Tag Sort v1.0.11
+# 🏷️ Zotero Tag Sort v1.0.2
 
-v1.0.11 新增了插件图标，并随附近期针对「标签挤在一行」问题的一系列稳定性修复。
+> 给 Zotero 左侧边栏的**标签筛选器**加上排序、线框与整洁排版的开源插件，完整保留原生筛选。
+>
+> An open-source plugin that adds sorting, wireframes and a clean layout to the Zotero tag selector — while keeping native filtering intact.
 
-v1.0.11 adds a plugin icon, together with recent stability fixes for the "tags squeezed onto
-one row" issue.
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+[![Zotero](https://img.shields.io/badge/Zotero-7%2B-red.svg)](https://www.zotero.org/)
+[![Platform](https://img.shields.io/badge/Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)]()
 
-## 🎨 新增 / New
+---
 
-- **插件图标 / Plugin icon** — 新增圆角蓝色方块 + 白色上下排序箭头图标（48px / 96px PNG，附 SVG 源文件），
-  用于 Zotero 插件列表展示。Added a plugin icon (rounded blue tile with white up/down sort arrows;
-  48px/96px PNG plus SVG source) for the Zotero add-ons list.
+## 📸 界面预览 / Preview
 
-## 🐛 修复 / Fixed
+![排序下拉菜单](https://github.com/zhongrubo/zotero-tag-sort/raw/main/docs/screenshots/sort-dropdown2.png)
 
-- **进一步根治「标签挤在同一行」 / Further eliminated the flow-layout regression**
-  - 新增「元素链」方式定位并修补 TagList 类（从容器 render 返回的元素逐步取得），不再依赖 window.require，
-    布局补丁在标签选择器渲染时必然生效。The TagList class is now located via the rendered element
-    chain, so the layout patch applies reliably without window.require.
-  - 新增启动自愈机制：窗口加载后自动重注入排序栏、重新应用排序与单列布局；并已改为「早停」——
-    确认生效后立即停止，启动开销可忽略。Added a startup self-heal that re-applies sorting/layout
-    and now stops early once confirmed, keeping startup overhead negligible.
-  - 新增诊断日志，便于定位补丁是否生效。Added diagnostic logging for the patch status.
+<details>
+<summary>图片说明 / Caption</summary>
 
-## ✨ 既有功能（不变）/ Existing features (unchanged)
+排序栏（左侧「排序」+ 右侧「取消选择」两个圆角框），下方为单列、左对齐、带浅色线框的标签列表。
 
-- 排序下拉菜单：按添加时间 / 首字母 / 名称长度排序，每种双向，实时生效并持久保存。
-  Sort dropdown: added time / name / length, each bidirectional, persisted.
-- 「取消选择」按钮：一键清除所有已勾选标签，无选择时自动置灰。
-  "Clear selection" button, grayed out when nothing is selected.
-- 标签线框、表格化单列布局、深色模式适配、保留原生筛选。
-  Tag wireframes, single-column layout, dark-mode support, native filtering preserved.
-- 排序栏两个圆角矩形框等宽、文字居中，排序按钮使用上下箭头图标。
-  Equal-width rounded boxes with centered text; sort button uses an up/down-arrow icon.
+The sort bar (sort + clear-selection boxes) above the single-column, framed tag list.
+
+</details>
+
+---
+
+## ✨ 功能特性 / Features
+
+### 🔽 排序下拉菜单 / Sort dropdown
+按「添加时间 / 首字母 / 名称长度」三种维度排序，每种均支持双向；选择后**实时重排**并持久保存。
+
+### 🏷️ 标签线框 / Tag wireframes
+每个标签加上柔和的浅色线框，自动适配浅色 / 深色主题，密集排列也不易混淆。
+
+### 📐 表格化布局 / Table-like layout
+标签改为单列、左对齐、行高与宽度统一，不再因名称长短而参差不齐。
+
+### 🧹 一键取消选择 / Clear selection
+一键清除所有已勾选标签；未选择任何标签时按钮自动置灰。
+
+### 🌙 深色模式 / Dark mode
+全部 UI 使用 Zotero 设计令牌，随系统 / Zotero 主题自动切换。
+
+### ✅ 保留原生筛选 / Native filtering preserved
+勾选标签过滤文献的交互、反馈与逻辑完全不变。
+
+---
 
 ## 📦 安装 / Installation
 
-1. 在下方 Assets 下载 `zotero-tag-sort.xpi`。Download `zotero-tag-sort.xpi` from the Assets below.
+1. 在下方 **Assets** 下载 `zotero-tag-sort.xpi`；
 2. Zotero → 工具 → 插件（Add-ons）→ 右上角齿轮 → 「从文件安装附加组件…」→ 选择 `.xpi`。
-   In Zotero: Tools → Add-ons → gear icon → “Install Add-on From File…” and pick the `.xpi`.
 
 Zotero 会自动替换旧版本，已保存的排序偏好保持不变。
-Zotero will replace the old version automatically; your saved sort preference is kept.
+
+---
 
 ## ✅ 兼容性 / Compatibility
 
-- Zotero 7.0 – 11.x
-- Windows / macOS / Linux
-- 500+ 标签保持流畅 / Smooth with 500+ tags
+| 项 | 说明 |
+| --- | --- |
+| Zotero | 7.0 – 11.x |
+| 平台 | Windows / macOS / Linux |
+| 性能 | 500+ 标签保持流畅 |
+
+---
 
 ## 🔗 链接 / Links
 

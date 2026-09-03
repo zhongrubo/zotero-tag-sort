@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Zotero Tag Sort",
-  "version": "1.0.11",
+  "version": "1.0.2",
   "description": "Adds sorting options (by added time, name, or length) and a clean, framed, table-like layout to the Zotero tag selector, while keeping all native filtering behavior.",
   "author": "Zotero Tag Sort Contributors",
   "homepage_url": "https://github.com/zhongrubo/zotero-tag-sort",
